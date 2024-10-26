@@ -11,12 +11,13 @@ public class BulletManager : MonoBehaviour
     [SerializeField] private string firingDirection; //LEFT Z=90; RIGHT Z=-90
     [SerializeField] private int maxBullets;
     [SerializeField] private float bulletSpeed;
-    private float bulletFireRate, directionMultiple;
+    private float bulletFireRateMin, bulletFireRateMax, directionMultiple;
 
     // Start is called before the first frame update
     void Start()
     {
-        bulletFireRate = 5.0f;
+        bulletFireRateMax = 5.0f;
+        bulletFireRateMax = 4.0f;
 
         for (int i = 0; i < maxBullets; i++)
         {
@@ -25,15 +26,17 @@ public class BulletManager : MonoBehaviour
             newBullet.SetActive(false);
             bulletsList.Add(newBullet);
         }
+
+        StartCoroutine(activateBulletFires());
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-
+        updateBulletSpawnRate();
     }
 
-    private void fireBullet(string firingDirection)
+    private void fireBullet()
     {
         GameObject chosenBullet = getBullet();
         if (chosenBullet != null)
@@ -63,5 +66,45 @@ public class BulletManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    private void updateBulletSpawnRate()
+    {
+        if (GameManager.instance.getTimeElapsed() <= 15)
+        {
+            bulletFireRateMax = 5.0f;
+            bulletFireRateMin = 4.0f;
+        }
+        else if (GameManager.instance.getTimeElapsed() <= 30)
+        {
+            bulletFireRateMax = 4.0f;
+            bulletFireRateMin = 3.0f;
+        }
+        else if (GameManager.instance.getTimeElapsed() <= 45)
+        {
+            bulletFireRateMax = 3.0f;
+            bulletFireRateMin = 2.0f;
+        }
+        else if (GameManager.instance.getTimeElapsed() <= 60)
+        {
+            bulletFireRateMax = 1.5f;
+            bulletFireRateMin = 0.5f;
+        }
+        else
+        {
+            bulletFireRateMax = 0.5f;
+            bulletFireRateMin = 0.4f;
+        }
+    }
+
+    IEnumerator activateBulletFires()
+    {
+        while (GameManager.instance.getGameOverStatus() == false)
+        {
+            yield return new WaitForSeconds(Random.Range(bulletFireRateMin, bulletFireRateMax));
+            Vector2 randomSpawnPoint = new Vector2(this.transform.position.x, Random.Range(-3.5f, 3.5f));
+            this.transform.position = randomSpawnPoint;
+            fireBullet();
+        }
     }
 }
