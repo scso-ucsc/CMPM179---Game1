@@ -17,7 +17,7 @@ public class BulletScript : MonoBehaviour
             ParticleManager.instance.emitBulletParticles(this.gameObject.transform.position);
             this.gameObject.SetActive(false);
         }
-        else //collider.gameObject.tag == "Wall"
+        else if (collider.gameObject.tag == "Wall") //collider.gameObject.tag == "Wall"
         {
             this.gameObject.SetActive(false);
         }
