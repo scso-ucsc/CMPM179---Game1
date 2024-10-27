@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
     public void gameOver()
     {
         isGameOver = true;
+        UIManager.instance.showGameOverUI();
     }
 
     public bool getGameOverStatus()
@@ -50,5 +52,10 @@ public class GameManager : MonoBehaviour
     public int getTimeElapsed()
     {
         return (int)timeElapsed;
+    }
+
+    public void restartGame()
+    {
+        SceneManager.LoadScene("MainScene");
     }
 }

@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private GameObject gameOverUI;
 
     void Awake()
     {
@@ -23,7 +24,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        gameOverUI.SetActive(false);
     }
 
     void FixedUpdate()
@@ -34,5 +35,16 @@ public class UIManager : MonoBehaviour
     private void updateScoreUI()
     {
         scoreText.text = GameManager.instance.getTimeElapsed().ToString();
+    }
+
+    public void showGameOverUI()
+    {
+        StartCoroutine(spawnGameOverOverlay());
+    }
+
+    IEnumerator spawnGameOverOverlay()
+    {
+        yield return new WaitForSeconds(2f);
+        gameOverUI.SetActive(true);
     }
 }

@@ -52,6 +52,7 @@ public class BulletManager : MonoBehaviour
                 directionMultiple = 1f;
             }
             chosenBullet.SetActive(true);
+            chosenBullet.GetComponent<TrailRenderer>().enabled = true;
             chosenBullet.GetComponent<Rigidbody2D>().velocity = new Vector2(directionMultiple * bulletSpeed, 0f);
         }
     }
