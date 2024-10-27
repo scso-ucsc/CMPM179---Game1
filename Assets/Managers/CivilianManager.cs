@@ -6,7 +6,7 @@ public class CivilianManager : MonoBehaviour
 {
     //Code made with help of https://www.youtube.com/watch?v=sIf_SQzj054 - Creating an Enemy Wander AI (Unity Tutorial | 2D Top Down Shooter)
 
-    [SerializeField] private float movementSpeed, rotationSpeed, movementBounds;
+    [SerializeField] private float movementSpeed, rotationSpeed, xMin, xMax, yMin, yMax;
     private Rigidbody2D rb;
     private Vector2 direction;
     private float directionChangeTime;
@@ -69,7 +69,7 @@ public class CivilianManager : MonoBehaviour
     private void handleOutOfBounds()
     {
         Vector2 position = rb.position;
-        if (position.x < -movementBounds || position.x > movementBounds || position.y < -movementBounds || position.y > movementBounds)
+        if (position.x < xMin || position.x > xMax || position.y < yMin || position.y > yMax)
         {
             returningToCentre = true;
         }
