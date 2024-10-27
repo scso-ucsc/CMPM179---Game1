@@ -10,7 +10,7 @@ public class BulletManager : MonoBehaviour
     [SerializeField] private Transform bulletParent, leftFireSpawnPoint, rightFireSpawnPoint;
     [SerializeField] private string firingDirection; //LEFT Z=90; RIGHT Z=-90
     [SerializeField] private int maxBullets;
-    [SerializeField] private float bulletSpeed;
+    [SerializeField] private float bulletSpeed, yMin, yMax;
     private float bulletFireRateMin, bulletFireRateMax, directionMultiple;
 
     // Start is called before the first frame update
@@ -102,7 +102,7 @@ public class BulletManager : MonoBehaviour
         while (GameManager.instance.getGameOverStatus() == false)
         {
             yield return new WaitForSeconds(Random.Range(bulletFireRateMin, bulletFireRateMax));
-            Vector2 randomSpawnPoint = new Vector2(this.transform.position.x, Random.Range(-3.5f, 3.5f));
+            Vector2 randomSpawnPoint = new Vector2(this.transform.position.x, Random.Range(yMin, yMax));
             if (GameManager.instance.getGameOverStatus() == false)
             {
                 this.transform.position = randomSpawnPoint;
