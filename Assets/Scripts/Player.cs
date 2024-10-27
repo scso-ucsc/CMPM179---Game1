@@ -18,10 +18,13 @@ public class Player : MonoBehaviour
     // Player Variables
     private Rigidbody2D rb;
 
+    private SpriteRenderer playerSprite;
+
     void Start()
     {
         gun = transform.Find("Gun").gameObject;
         gunSprite = gun.GetComponent<SpriteRenderer>();
+        playerSprite = transform.Find("Sprite").GetComponent<SpriteRenderer>();
 
         rb = GetComponent<Rigidbody2D>();
     }
@@ -31,6 +34,25 @@ public class Player : MonoBehaviour
     {
         GunMovementHandler();
         InputHandler();
+    }
+
+    void LateUpdate() {
+        OutOfBoundsHandler();
+    }
+
+    void OutOfBoundsHandler() {
+        // Keep the player within the screen bounds
+        Vector2 screenBounds = GameManager.instance.getScreenBounds();
+        // shrink the bound by a factor of 0.8 to keep the player within the screen
+        screenBounds.x *= 0.8f;
+        screenBounds.y *= 0.7f;
+
+        Vector3 playerPos = transform.position;
+
+        playerPos.x = Mathf.Clamp(playerPos.x, -screenBounds.x, screenBounds.x);
+        playerPos.y = Mathf.Clamp(playerPos.y, -screenBounds.y, screenBounds.y);
+
+        transform.position = playerPos;
     }
 
     void GunMovementHandler() {
@@ -55,6 +77,7 @@ public class Player : MonoBehaviour
         Vector3 gunDirection = mousePos - gunPos;
         float angle = Mathf.Atan2(gunDirection.y, gunDirection.x) * Mathf.Rad2Deg;
         gun.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90));
 
         if (mousePos.x < playerPos.x) {
             gunSprite.flipY = true;

@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     private bool isGameOver;
     private float timeElapsed;
+    private Vector2 screenBounds;
 
     void Awake()
     {
@@ -20,6 +21,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this);
         }
+
+        screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
     }
 
     // Start is called before the first frame update
@@ -52,6 +55,11 @@ public class GameManager : MonoBehaviour
     public int getTimeElapsed()
     {
         return (int)timeElapsed;
+    }
+
+    public Vector2 getScreenBounds()
+    {
+        return screenBounds;
     }
 
     public void restartGame()

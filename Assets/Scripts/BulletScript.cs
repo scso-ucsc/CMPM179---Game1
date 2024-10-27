@@ -24,6 +24,10 @@ public class BulletScript : MonoBehaviour
             this.GetComponent<TrailRenderer>().enabled = false;
             this.gameObject.SetActive(false);
         }
-        this.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        else if (collider.gameObject.tag != "Border") {
+            this.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        }
+
+        Debug.Log("Bullet hit something with tag: " + collider.gameObject.tag);
     }
 }
