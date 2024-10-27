@@ -167,4 +167,4 @@ MonoBehaviour:
   rightFireSpawnPoint: {fileID: 477367354771433228}
   firingDirection: 
   maxBullets: 20
-  bulletSpeed: 10
+  bulletSpeed: 5

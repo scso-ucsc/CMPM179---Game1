@@ -21,15 +21,18 @@ public class CivilianManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (returningToCentre == true)
+        if (GameManager.instance.getGameOverStatus() == false)
         {
-            returnToCentre();
-        }
-        else
-        {
-            updateTargetDirection();
-            rotateBody();
-            setVelocity();
+            if (returningToCentre == true)
+            {
+                returnToCentre();
+            }
+            else
+            {
+                updateTargetDirection();
+                rotateBody();
+                setVelocity();
+            }
         }
     }
 

@@ -103,8 +103,11 @@ public class BulletManager : MonoBehaviour
         {
             yield return new WaitForSeconds(Random.Range(bulletFireRateMin, bulletFireRateMax));
             Vector2 randomSpawnPoint = new Vector2(this.transform.position.x, Random.Range(-3.5f, 3.5f));
-            this.transform.position = randomSpawnPoint;
-            fireBullet();
+            if (GameManager.instance.getGameOverStatus() == false)
+            {
+                this.transform.position = randomSpawnPoint;
+                fireBullet();
+            }
         }
     }
 }
