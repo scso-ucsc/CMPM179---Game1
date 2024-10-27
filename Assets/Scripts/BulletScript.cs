@@ -8,10 +8,15 @@ public class BulletScript : MonoBehaviour
     {
         if (collider.gameObject.tag == "Civilian")
         {
+            ParticleManager.instance.emitDeathParticles(this.gameObject.transform.position);
             GameManager.instance.gameOver();
             this.gameObject.SetActive(false);
         }
-        else if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "Wall")
+        else if (collider.gameObject.tag == "Player" || collider.gameObject.tag == "Bullet")
+        {
+            this.gameObject.SetActive(false);
+        }
+        else //collider.gameObject.tag == "Wall"
         {
             this.gameObject.SetActive(false);
         }
