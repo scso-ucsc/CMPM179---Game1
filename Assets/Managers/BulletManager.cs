@@ -54,6 +54,7 @@ public class BulletManager : MonoBehaviour
             chosenBullet.SetActive(true);
             chosenBullet.GetComponent<TrailRenderer>().enabled = true;
             chosenBullet.GetComponent<Rigidbody2D>().velocity = new Vector2(directionMultiple * bulletSpeed, 0f);
+            AudioManager.instance.playFireBullet(this.transform.position);
         }
     }
 
