@@ -55,9 +55,6 @@ public class BulletManager : MonoBehaviour
             chosenBullet.GetComponent<TrailRenderer>().enabled = true;
             chosenBullet.GetComponent<Rigidbody2D>().velocity = new Vector2(directionMultiple * bulletSpeed, 0f);
             AudioManager.instance.playFireBullet(this.transform.position);
-
-            // disable bullet after 2 seconds
-            StartCoroutine(disableBullet(chosenBullet));
         }
     }
 
@@ -114,11 +111,5 @@ public class BulletManager : MonoBehaviour
                 fireBullet();
             }
         }
-    }
-
-    private IEnumerator disableBullet(GameObject bullet)
-    {
-        yield return new WaitForSeconds(6.0f);
-        bullet.SetActive(false);
     }
 }

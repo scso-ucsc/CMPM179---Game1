@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -9,12 +11,22 @@ public class Player : MonoBehaviour
     private SpriteRenderer gunSprite;
     private Vector3 originalGunScale = new Vector3(0.05f, 0.05f, 1);
     [SerializeField] private float gunSizeGrowthFactor = 0.1f;
-    [SerializeField] private float gunFloatMinRadius = 1f;
     [SerializeField] private float gunFloatMaxRadius = 2f;
-    [SerializeField] private float baseRecoilForce = 1000f;
+    [SerializeField] private float baseRecoilForce = 700f;
     [SerializeField] private float recoilGrowthFactor = 0.1f;
     [SerializeField] private Vector3 maxGunSize = new Vector3(0.10f, 0.10f, 1);
     [SerializeField] private float timeHeld = 0f;
+
+    // Time Slowdown Variables
+    [SerializeField] private float slowdownFactor = 0.25f;
+    [SerializeField] private VignetteController vignetteController;
+    [SerializeField] private float slowdownDuration = 3f;
+    [SerializeField] private float slowdownCooldown = 5f;
+    private bool isSlowedDown = false;
+    private bool canSlowdown = true;
+
+    [SerializeField] private Image slowDownCooldownImage;
+    [SerializeField] private TextMeshProUGUI timeSlowText;
 
     // Player Variables
     private Rigidbody2D rb;
@@ -50,15 +62,16 @@ public class Player : MonoBehaviour
 
         Vector3 playerPos = transform.position;
 
-        playerPos.x = Mathf.Clamp(playerPos.x, -screenBounds.x, screenBounds.x);
-        playerPos.y = Mathf.Clamp(playerPos.y, -screenBounds.y, screenBounds.y);
+        // Clamp by 95% of the screen bounds to keep the player within the screen
+        playerPos.x = Mathf.Clamp(playerPos.x, -screenBounds.x * 0.95f, screenBounds.x * 0.95f);
+        playerPos.y = Mathf.Clamp(playerPos.y, -screenBounds.y * 0.95f, screenBounds.y * 0.95f);
+
 
         transform.position = playerPos;
     }
 
     void GunMovementHandler() {
         // Move the gun as close to the mouse as possible within gunFloatMaxRadius of the player 
-        // while keeping the gun outside of gunFloatMinRadius of the player
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 playerPos = transform.position;
         Vector3 gunPos = gun.transform.position;
@@ -68,8 +81,6 @@ public class Player : MonoBehaviour
 
         if (distance > gunFloatMaxRadius) {
             gun.transform.position = playerPos + direction.normalized * gunFloatMaxRadius;
-        } else if (distance < gunFloatMinRadius) {
-            gun.transform.position = playerPos + direction.normalized * gunFloatMinRadius;
         } else {
             gun.transform.position = mousePos;
         }
@@ -97,16 +108,26 @@ public class Player : MonoBehaviour
             // Start the shooting coroutine
             StartCoroutine(ShootCoroutine());
         }
+
+        // if the player presses E, tweens the time to slowdownFactor in a coroutine
+        if (Input.GetKeyDown(KeyCode.E) && canSlowdown && !isSlowedDown) {
+            vignetteController.FadeIn(0.4f, 0.5f, slowdownFactor);
+            isSlowedDown = true;
+            canSlowdown = false;
+
+            StartCoroutine(SlowdownCoroutine());
+        }
     }
 
     void ShootHandler() {
         // Shoot and apply recoil force
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 playerPos = transform.position;
+        Vector3 gunPos = gun.transform.position;
 
-        // Calculate the direction of the recoil (opposite to the shooting direction)
-        Vector3 direction = playerPos - mousePos;
-        direction.Normalize(); // Normalize the direction to apply consistent recoil
+        // Calculate the direction of the recoil (directly behind the player)
+
+        Vector3 direction = -gun.transform.right;
 
         float recoilForce = baseRecoilForce + (timeHeld * baseRecoilForce * recoilGrowthFactor);
 
@@ -131,4 +152,38 @@ public class Player : MonoBehaviour
         // once the player releases the mouse button, fire the gun
         ShootHandler();
     }
+
+    IEnumerator SlowdownCoroutine() {
+        yield return new WaitForSeconds(slowdownDuration);
+
+        vignetteController.FadeOut(0.5f);
+
+        Time.timeScale = 1;
+
+        isSlowedDown = false;
+
+        // begin cooldown for slowdown, fill cooldown image to represent the cooldown
+        StartCoroutine(SlowdownCooldownCoroutine());
+    }
+
+    IEnumerator SlowdownCooldownCoroutine() {
+        float timeElapsed = 0f;
+        timeSlowText.color = Color.white;
+        timeSlowText.fontSize = 48;
+
+        while (timeElapsed < slowdownCooldown) {
+            timeElapsed += Time.deltaTime;
+            float fillAmount = timeElapsed / slowdownCooldown;
+            slowDownCooldownImage.fillAmount = fillAmount;
+            timeSlowText.text = (slowdownCooldown - timeElapsed).ToString("F1");
+            yield return null;
+        }
+
+        slowDownCooldownImage.fillAmount = 1;
+        timeSlowText.text = "PRESS E";
+        timeSlowText.color = Color.green;
+        timeSlowText.fontSize = 40;
+        canSlowdown = true;
+    }
 }
+

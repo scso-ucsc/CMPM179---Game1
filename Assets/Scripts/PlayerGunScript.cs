@@ -24,7 +24,7 @@ public class PlayerGunScript : MonoBehaviour
     // Player has 3 bullets which regenerate by 1 every 2 seconds
     [SerializeField] private int ammo = 3;
     private int maxAmmo = 3;
-    private float ammoRegenRate = 2f;
+    [SerializeField] private float ammoRegenRate = 1f;
     private bool regeneratingAmmo = false;
     [SerializeField] private SpriteRenderer[] ammoSprites;
 
@@ -39,6 +39,9 @@ public class PlayerGunScript : MonoBehaviour
             bullet.SetActive(false);
             bulletPool.Add(bullet);
         }
+
+        // Ignore physics between layer 3 and 8 (Player and PlayerBullet layers)
+        Physics2D.IgnoreLayerCollision(3, 8);
     }
 
     void Update()
