@@ -64,7 +64,7 @@ public class Player : MonoBehaviour
 
         // Clamp by 95% of the screen bounds to keep the player within the screen
         playerPos.x = Mathf.Clamp(playerPos.x, -screenBounds.x * 0.95f, screenBounds.x * 0.95f);
-        playerPos.y = Mathf.Clamp(playerPos.y, -screenBounds.y * 0.95f, screenBounds.y * 0.95f);
+        playerPos.y = Mathf.Clamp(playerPos.y, -screenBounds.y * 0.95f, screenBounds.y * 0.70f);
 
 
         transform.position = playerPos;
