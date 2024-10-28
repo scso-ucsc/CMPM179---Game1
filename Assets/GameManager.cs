@@ -44,6 +44,11 @@ public class GameManager : MonoBehaviour
     public void gameOver()
     {
         isGameOver = true;
+        // Store score as high score if it is higher than the current high score in player prefs
+        if (PlayerPrefs.GetInt("HighScore") < (int)timeElapsed)
+        {
+            PlayerPrefs.SetInt("HighScore", (int)timeElapsed);
+        }
         UIManager.instance.showGameOverUI();
     }
 

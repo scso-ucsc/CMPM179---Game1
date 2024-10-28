@@ -9,6 +9,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private GameObject gameOverUI;
 
+    [SerializeField] private TextMeshProUGUI highScoreText;
+    [SerializeField] private TextMeshProUGUI endScoreText;
+
     void Awake()
     {
         if (instance == null)
@@ -46,5 +49,7 @@ public class UIManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         gameOverUI.SetActive(true);
+        highScoreText.text = "High Score: " + PlayerPrefs.GetInt("HighScore").ToString();
+        endScoreText.text = "Score: " + GameManager.instance.getTimeElapsed().ToString();
     }
 }
