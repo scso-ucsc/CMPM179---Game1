@@ -49,6 +49,10 @@ public class Player : MonoBehaviour
         {
             GunMovementHandler();
             InputHandler();
+        } else {
+            // Stop all coroutines if the game is over, set time scale to 1
+            StopAllCoroutines();
+            Time.timeScale = 1;
         }
     }
 
@@ -138,7 +142,7 @@ public class Player : MonoBehaviour
         gun.transform.localScale = originalGunScale;
 
         // Shoot the bullet
-        gun.GetComponent<PlayerGunScript>().ShootBullet(gun.transform.position, gun.transform.localScale, gun.transform.right);
+        gun.GetComponent<PlayerGunScript>().ShootBullet(gun.transform.position, gun.transform.localScale, gun.transform.right, timeHeld);
     }
 
     IEnumerator ShootCoroutine() {

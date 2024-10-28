@@ -17,7 +17,7 @@ public class PlayerGunScript : MonoBehaviour
 
     // Bullet Stats
     [SerializeField] private float bulletSpeed = 10f;
-    [SerializeField] private float bulletLifeTime = 1f;
+    [SerializeField] private float bulletLifeTime = 7f;
     [SerializeField] private Transform bulletParent;
 
     // Ammo
@@ -77,7 +77,7 @@ public class PlayerGunScript : MonoBehaviour
         }
     }
 
-    public void ShootBullet(Vector3 gunPosition, Vector3 gunScale, Vector3 gunDirection)
+    public void ShootBullet(Vector3 gunPosition, Vector3 gunScale, Vector3 gunDirection, float timeHeld)
     {
         // Find an inactive bullet in the pool
         GameObject bullet = bulletPool.Find(b => b.activeSelf == false);
@@ -85,7 +85,8 @@ public class PlayerGunScript : MonoBehaviour
         if (bullet != null)
         {
             bullet.transform.position = gunPosition + 0.5f * gunDirection;
-            bullet.transform.localScale = gunScale;
+            bullet.transform.localScale = gunScale + timeHeld * Vector3.one * 0.3f;
+            bullet.transform.rotation = Quaternion.LookRotation(Vector3.forward, gunDirection);
 
             bullet.SetActive(true);
             bullet.GetComponent<TrailRenderer>().Clear();
