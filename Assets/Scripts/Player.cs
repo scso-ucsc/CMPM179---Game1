@@ -8,16 +8,16 @@ public class Player : MonoBehaviour
     private GameObject gun;
     private SpriteRenderer gunSprite;
     private Vector3 originalGunScale = new Vector3(0.05f, 0.05f, 1);
-    public float gunSizeGrowthFactor = 0.1f;
-    public float gunFloatMinRadius = 1f;
-    public float gunFloatMaxRadius = 2f;
-    public float baseRecoilForce = 100f;
-    public float recoilGrowthFactor = 0.1f;
-    public float timeHeld = 0f;
+    [SerializeField] private float gunSizeGrowthFactor = 0.1f;
+    [SerializeField] private float gunFloatMinRadius = 1f;
+    [SerializeField] private float gunFloatMaxRadius = 2f;
+    [SerializeField] private float baseRecoilForce = 1000f;
+    [SerializeField] private float recoilGrowthFactor = 0.1f;
+    [SerializeField] private Vector3 maxGunSize = new Vector3(0.10f, 0.10f, 1);
+    [SerializeField] private float timeHeld = 0f;
 
     // Player Variables
     private Rigidbody2D rb;
-
     private SpriteRenderer playerSprite;
 
     void Start()
@@ -32,8 +32,12 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GunMovementHandler();
-        InputHandler();
+        // if not game over, handle player input
+        if (!GameManager.instance.getGameOverStatus())
+        {
+            GunMovementHandler();
+            InputHandler();
+        }
     }
 
     void LateUpdate() {
@@ -43,9 +47,6 @@ public class Player : MonoBehaviour
     void OutOfBoundsHandler() {
         // Keep the player within the screen bounds
         Vector2 screenBounds = GameManager.instance.getScreenBounds();
-        // shrink the bound by a factor of 0.8 to keep the player within the screen
-        screenBounds.x *= 0.8f;
-        screenBounds.y *= 0.7f;
 
         Vector3 playerPos = transform.position;
 
@@ -87,7 +88,7 @@ public class Player : MonoBehaviour
     }
 
     void InputHandler() {
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && gun.GetComponent<PlayerGunScript>().getAmmo() > 0) {
             // The longer the player holds the mouse button, the more powerful the recoil
             
             // calculate the time the player has held the mouse button
@@ -109,17 +110,18 @@ public class Player : MonoBehaviour
 
         float recoilForce = baseRecoilForce + (timeHeld * baseRecoilForce * recoilGrowthFactor);
 
-        Debug.Log("Recoil Force: " + recoilForce);
-
         // Add the recoil force to the player's Rigidbody
         rb.AddForce(direction * recoilForce);
 
         // Reset the gun scale
         gun.transform.localScale = originalGunScale;
+
+        // Shoot the bullet
+        gun.GetComponent<PlayerGunScript>().ShootBullet(gun.transform.position, gun.transform.localScale, gun.transform.right);
     }
 
     IEnumerator ShootCoroutine() {
-        while (Input.GetMouseButton(0)) {
+        while (Input.GetMouseButton(0) && gun.transform.localScale.x < maxGunSize.x) {
             timeHeld += Time.deltaTime;
             // increase the scale of the gun while the player holds the mouse button
             gun.transform.localScale = originalGunScale + new Vector3(timeHeld * gunSizeGrowthFactor, timeHeld * gunSizeGrowthFactor, 0);

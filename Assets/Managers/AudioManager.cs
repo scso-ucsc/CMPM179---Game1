@@ -6,7 +6,7 @@ public class AudioManager : MonoBehaviour
 {
     //AudioManager Variables
     public static AudioManager instance;
-    [SerializeField] private AudioSource backgroundMusicSource, impactAudioSource, bulletFireSource;
+    [SerializeField] private AudioSource backgroundMusicSource, impactAudioSource, bulletFireSource, playerSource;
     [SerializeField] private AudioClip playerHitSound, bulletHitSound, civilianHitSound;
 
     void Awake()
@@ -49,5 +49,11 @@ public class AudioManager : MonoBehaviour
     {
         bulletFireSource.transform.position = fireLocation;
         bulletFireSource.Play();
+    }
+
+    public void playPlayerSound(Vector2 playerLocation)
+    {
+        playerSource.transform.position = playerLocation;
+        playerSource.Play();
     }
 }
